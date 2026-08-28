@@ -1,5 +1,3 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/dist",
-  "functions": { "api/index.js": { "includeFiles": ["prisma/**"] } }
+  "version": 2
 }
