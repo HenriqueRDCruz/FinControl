@@ -1,35 +1,27 @@
-# Controle Financeiro
+# FinControl — Controle Financeiro
 
-Aplicação web para controle de receitas, despesas, investimentos e categorias, com dashboard e gráficos.
+MVP acadêmico com React + Vite + TypeScript no frontend, API serverless TypeScript/Node no backend, Prisma e PostgreSQL.
 
-## Stack
-- Frontend: React + Vite + TypeScript
-- Backend: Node.js + Express + TypeScript
-- ORM: Prisma
-- Banco: PostgreSQL
-- Gráficos: Recharts
-- Deploy: Vercel (frontend) + backend em serviço Node compatível
+## 1. Banco
+Crie um PostgreSQL (ex.: Neon/Supabase) e obtenha `DATABASE_URL`.
 
-## Estrutura
-- `frontend/`: interface React
-- `backend/`: API REST e Prisma
+## 2. Variável local
+Na raiz crie `.env` a partir de `.env.example`.
 
-## Executar
-### Backend
+## 3. Instalação
 ```bash
-cd backend
-cp .env.example .env
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
 ```
 
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
+Para desenvolvimento da API serverless, a forma mais fácil é usar `vercel dev` após instalar a Vercel CLI. Para o deploy, a Vercel usa `npm run build` e publica `frontend/dist`.
 
-Defina `VITE_API_URL` no frontend se a API não estiver em `http://localhost:3333/api`.
+## Deploy
+1. Suba o repositório para GitHub.
+2. Importe o repositório na Vercel.
+3. Não defina Root Directory; o `vercel.json` da raiz já aponta para `frontend`.
+4. Em Environment Variables, adicione `DATABASE_URL` do PostgreSQL.
+5. Faça o deploy.
+6. Depois, aplique a migration no banco de produção com `npx prisma migrate deploy`.
