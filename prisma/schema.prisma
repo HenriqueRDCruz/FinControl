@@ -1,27 +1,40 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Category {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
   transactions Transaction[]
-  createdAt DateTime @default(now())
+  createdAt    DateTime      @default(now())
 }
+
 model Transaction {
-  id Int @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   description String
-  amount Decimal @db.Decimal(12,2)
-  type TransactionType
-  date DateTime
-  categoryId Int
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  createdAt DateTime @default(now())
+  amount      Decimal         @db.Decimal(12, 2)
+  type        TransactionType
+  date        DateTime
+  categoryId  Int
+  category    Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt   DateTime        @default(now())
 }
+
 model Investment {
-  id Int @id @default(autoincrement())
-  name String
-  invested Decimal @db.Decimal(12,2)
-  currentValue Decimal @db.Decimal(12,2)
-  date DateTime
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  name         String
+  invested     Decimal  @db.Decimal(12, 2)
+  currentValue Decimal  @db.Decimal(12, 2)
+  date         DateTime
+  createdAt    DateTime @default(now())
 }
-enum TransactionType { RECEITA DESPESA }
+
+enum TransactionType {
+  RECEITA
+  DESPESA
+}
