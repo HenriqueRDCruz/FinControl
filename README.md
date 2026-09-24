@@ -22,8 +22,8 @@ cd backend && cp .env.example .env
 npm install
 npx prisma migrate dev --name init
 npm run start:dev
-npm test                # testes unitários
-npm run test:e2e        # requer Postgres de teste configurado
+npm test
+npm run test:e2e
 
 # Frontend (outro terminal)
 cd frontend && cp .env.example .env.local
