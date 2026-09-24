@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --page-glow: rgba(99, 102, 241, 0.10);
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: #ffffff;
+  --line: rgba(15, 23, 42, 0.10);
+}
+
+.dark {
+  --page-glow: rgba(129, 140, 248, 0.12);
+  --surface: rgba(24, 29, 49, 0.78);
+  --surface-strong: #181d31;
+  --line: rgba(148, 163, 184, 0.16);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 0% 0%, var(--page-glow), transparent 32rem),
+    radial-gradient(circle at 100% 20%, rgba(16, 185, 129, 0.06), transparent 28rem),
+    #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 0% 0%, var(--page-glow), transparent 32rem),
+    radial-gradient(circle at 100% 20%, rgba(16, 185, 129, 0.07), transparent 28rem),
+    #0b1020;
+}
+
+@layer components {
+  input, select, textarea {
+    border-radius: 0.75rem;
+    border-color: var(--line);
+    background: var(--surface);
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: rgb(99 102 241 / 0.7);
+    box-shadow: 0 0 0 4px rgb(99 102 241 / 0.12);
+    outline: none;
+  }
+
+  button, a {
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  }
+
+  button:active, a:active { transform: translateY(1px); }
+
+  [class*="border-neutral-200"], [class*="border-neutral-300"], [class*="border-neutral-800"], [class*="border-neutral-700"] {
+    border-color: var(--line) !important;
+  }
+
+  [class*="rounded-lg"][class*="border"], [class*="rounded-md"][class*="border"] {
+    background: var(--surface);
+    box-shadow: 0 10px 30px -24px rgb(15 23 42 / 0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  [class*="hover:bg-neutral-50"]:hover, [class*="hover:bg-neutral-900"]:hover {
+    background: color-mix(in srgb, var(--surface-strong) 88%, rgb(99 102 241 / 0.18)) !important;
+    border-color: rgb(99 102 241 / 0.35) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
