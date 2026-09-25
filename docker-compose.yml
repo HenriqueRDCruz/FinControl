@@ -26,7 +26,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      DATABASE_URL: postgresql://financeiro:financeiro@postgres:5432/plataforma_financeira?schema=public
+      DATABASE_URL: postgresql://neondb_owner:npg_bYFQHX4rVPn7@ep-falling-resonance-ay3jonzv-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     ports:
       - "3001:3001"
     volumes:
