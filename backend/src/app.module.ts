@@ -13,6 +13,8 @@ import { CreditCardsModule } from './credit-cards/credit-cards.module';
 import { InvestmentsModule } from './investments/investments.module';
 import { NetWorthModule } from './net-worth/net-worth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { QuotesModule } from './quotes/quotes.module';
+import { StatementsModule } from './statements/statements.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
@@ -31,6 +33,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     InvestmentsModule,
     NetWorthModule,
     DashboardModule,
+    QuotesModule,
+    StatementsModule,
   ],
   controllers: [HealthController],
   providers: [

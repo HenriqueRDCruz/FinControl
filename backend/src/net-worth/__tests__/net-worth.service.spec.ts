@@ -74,6 +74,27 @@ describe('NetWorthService', () => {
       expect(result.netWorth).toBe(0);
     });
 
+    it('com waitForSnapshot=false devolve os totais sem esperar a gravacao e ainda grava o snapshot', async () => {
+      prisma.income.aggregate.mockResolvedValue({ _sum: { amount: 5000 } });
+      prisma.expense.aggregate.mockResolvedValue({ _sum: { amount: 1000 } });
+      prisma.investment.findMany.mockResolvedValue([]);
+      prisma.netWorthSnapshot.upsert.mockReturnValue(new Promise(() => undefined)); // nunca termina
+
+      const result = await service.getCurrent('user-a', false);
+
+      expect(result.netWorth).toBe(4000);
+      expect(prisma.netWorthSnapshot.upsert).toHaveBeenCalledTimes(1);
+    });
+
+    it('falha ao gravar o snapshot em segundo plano nao derruba a resposta', async () => {
+      prisma.income.aggregate.mockResolvedValue({ _sum: { amount: 100 } });
+      prisma.expense.aggregate.mockResolvedValue({ _sum: { amount: 0 } });
+      prisma.investment.findMany.mockResolvedValue([]);
+      prisma.netWorthSnapshot.upsert.mockRejectedValue(new Error('banco fora do ar'));
+
+      await expect(service.getCurrent('user-a', false)).resolves.toMatchObject({ netWorth: 100 });
+    });
+
     it('grava (upsert) o snapshot do dia — historico e populado automaticamente, nunca digitado', async () => {
       prisma.income.aggregate.mockResolvedValue({ _sum: { amount: 5000 } });
       prisma.expense.aggregate.mockResolvedValue({ _sum: { amount: 1000 } });

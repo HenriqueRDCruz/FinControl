@@ -18,7 +18,7 @@ describe('AuthService', () => {
       create: jest.Mock;
     };
     emailVerificationToken: { create: jest.Mock };
-    passwordResetToken: { findUnique: jest.Mock; create: jest.Mock };
+    passwordResetToken: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock };
     user: { update: jest.Mock };
     $transaction: jest.Mock;
   };
@@ -33,7 +33,11 @@ describe('AuthService', () => {
         create: jest.fn().mockResolvedValue({}),
       },
       emailVerificationToken: { create: jest.fn().mockResolvedValue({}) },
-      passwordResetToken: { findUnique: jest.fn(), create: jest.fn().mockResolvedValue({}) },
+      passwordResetToken: {
+        findUnique: jest.fn(),
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+      },
       user: { update: jest.fn() },
       $transaction: jest.fn((ops) => Promise.all(ops)),
     };

@@ -7,17 +7,17 @@ import { InvestmentsService } from '../../investments/investments.service';
 describe('DashboardService', () => {
   let service: DashboardService;
   let prisma: {
-    income: { aggregate: jest.Mock };
-    expense: { aggregate: jest.Mock; groupBy: jest.Mock };
+    income: { findMany: jest.Mock };
+    expense: { findMany: jest.Mock; groupBy: jest.Mock };
   };
   let netWorthService: { getCurrent: jest.Mock };
   let investmentsService: { getSummary: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
-      income: { aggregate: jest.fn().mockResolvedValue({ _sum: { amount: 0 } }) },
+      income: { findMany: jest.fn().mockResolvedValue([]) },
       expense: {
-        aggregate: jest.fn().mockResolvedValue({ _sum: { amount: 0 } }),
+        findMany: jest.fn().mockResolvedValue([]),
         groupBy: jest.fn().mockResolvedValue([]),
       },
     };
@@ -50,14 +50,41 @@ describe('DashboardService', () => {
       expect(asIndex(trend[2].month, trend[2].year)).toBe(asIndex(trend[1].month, trend[1].year) + 1);
     });
 
-    it('cada mes do trend e filtrado por userId', async () => {
+    it('o trend e filtrado por userId', async () => {
       await service.getIncomeVsExpensesTrend('user-b', 2);
-      expect(prisma.income.aggregate).toHaveBeenCalledWith(
+      expect(prisma.income.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: expect.objectContaining({ userId: 'user-b' }) }),
       );
-      expect(prisma.expense.aggregate).toHaveBeenCalledWith(
+      expect(prisma.expense.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: expect.objectContaining({ userId: 'user-b' }) }),
       );
+    });
+
+    it('busca o periodo inteiro com apenas 2 consultas (nao 2 por mes)', async () => {
+      await service.getIncomeVsExpensesTrend('user-a', 6);
+      expect(prisma.income.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.expense.findMany).toHaveBeenCalledTimes(1);
+    });
+
+    it('soma cada lancamento no mes do calendario, inclusive o dia 1 (coluna DATE, meia-noite UTC)', async () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth(); // 0-11
+      const prev = new Date(Date.UTC(y, m - 1, 1));
+      prisma.income.findMany.mockResolvedValue([
+        { date: new Date(Date.UTC(y, m, 10)), amount: 1000 },
+        { date: new Date(Date.UTC(y, m, 1)), amount: 200 }, // dia 1 pertence ao mes atual
+        { date: new Date(Date.UTC(prev.getUTCFullYear(), prev.getUTCMonth(), 20)), amount: 500 },
+      ]);
+      prisma.expense.findMany.mockResolvedValue([
+        { date: new Date(Date.UTC(y, m, 5)), amount: 300.5 },
+        { date: new Date(Date.UTC(y, m, 6)), amount: 99.5 },
+      ]);
+
+      const trend = await service.getIncomeVsExpensesTrend('user-a', 2);
+
+      expect(trend[1]).toMatchObject({ income: 1200, expenses: 400 });
+      expect(trend[0]).toMatchObject({ income: 500, expenses: 0 });
     });
   });
 
@@ -84,20 +111,25 @@ describe('DashboardService', () => {
 
   describe('getOverview', () => {
     it('calcula a taxa de economia do mes corrente corretamente', async () => {
-      prisma.income.aggregate.mockResolvedValue({ _sum: { amount: 5000 } });
-      prisma.expense.aggregate.mockResolvedValue({ _sum: { amount: 4000 } });
+      const now = new Date();
+      const thisMonth = (day: number) => new Date(Date.UTC(now.getFullYear(), now.getMonth(), day));
+      prisma.income.findMany.mockResolvedValue([{ date: thisMonth(10), amount: 5000 }]);
+      prisma.expense.findMany.mockResolvedValue([{ date: thisMonth(12), amount: 4000 }]);
 
       const overview = await service.getOverview('user-a');
 
       expect(overview.currentMonth.savingsRate).toBe(20);
       expect(overview.netWorth).toEqual({ netWorth: 1000 });
-      expect(netWorthService.getCurrent).toHaveBeenCalledWith('user-a');
+      expect(netWorthService.getCurrent).toHaveBeenCalledWith('user-a', false);
       expect(investmentsService.getSummary).toHaveBeenCalledWith('user-a');
     });
 
     it('taxa de economia e 0 (nao quebra) quando nao ha renda no mes', async () => {
-      prisma.income.aggregate.mockResolvedValue({ _sum: { amount: 0 } });
-      prisma.expense.aggregate.mockResolvedValue({ _sum: { amount: 500 } });
+      const now = new Date();
+      prisma.income.findMany.mockResolvedValue([]);
+      prisma.expense.findMany.mockResolvedValue([
+        { date: new Date(Date.UTC(now.getFullYear(), now.getMonth(), 3)), amount: 500 },
+      ]);
 
       const overview = await service.getOverview('user-a');
 

@@ -10,26 +10,26 @@ const passwordSchema = z
 export const registerSchema = z
   .object({
     name: z.string().min(2, 'Informe seu nome completo').max(120),
-    email: z.string().email('E-mail invalido'),
+    email: z.string().email('E-mail inválido'),
     password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas nao coincidem',
+    message: 'As senhas não coincidem',
     path: ['confirmPassword'],
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().email('E-mail invalido'),
+  email: z.string().email('E-mail inválido'),
   password: z.string().min(1, 'Informe sua senha'),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email('E-mail invalido'),
+  email: z.string().email('E-mail inválido'),
 });
 
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
@@ -40,7 +40,7 @@ export const resetPasswordSchema = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'As senhas nao coincidem',
+    message: 'As senhas não coincidem',
     path: ['confirmPassword'],
   });
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { toPlainDecimal, toPlainDecimalList } from '../common/utils/decimal.util';
 
@@ -12,6 +12,8 @@ function startOfDay(date: Date): Date {
 
 @Injectable()
 export class NetWorthService {
+  private readonly logger = new Logger(NetWorthService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   private async computeTotals(userId: string, asOfDate: Date) {
@@ -43,22 +45,31 @@ export class NetWorthService {
     };
   }
 
-  async getCurrent(userId: string) {
+  /**
+   * Patrimônio de hoje. Também grava o snapshot do dia (é daí que vem o histórico).
+   * `waitForSnapshot = false` devolve os totais assim que calculados e grava o snapshot em segundo plano:
+   * quem só precisa mostrar o número (dashboard) não espera a escrita no banco.
+   */
+  async getCurrent(userId: string, waitForSnapshot = true) {
     const today = startOfDay(new Date());
     const totals = await this.computeTotals(userId, today);
 
-    const snapshot = await this.prisma.netWorthSnapshot.upsert({
-      where: { userId_date: { userId, date: today } },
-      create: { userId, date: today, ...totals },
-      update: { ...totals },
-    });
+    const saveSnapshot = () =>
+      this.prisma.netWorthSnapshot.upsert({
+        where: { userId_date: { userId, date: today } },
+        create: { userId, date: today, ...totals },
+        update: { ...totals },
+      });
 
-    return toPlainDecimal(snapshot, [
-      'totalIncome',
-      'totalExpenses',
-      'totalInvestments',
-      'netWorth',
-    ]);
+    if (!waitForSnapshot) {
+      saveSnapshot().catch((error: Error) =>
+        this.logger.warn(`Não foi possível gravar o snapshot do patrimônio: ${error.message}`),
+      );
+      return { date: today, ...totals };
+    }
+
+    const snapshot = await saveSnapshot();
+    return toPlainDecimal(snapshot, ['totalIncome', 'totalExpenses', 'totalInvestments', 'netWorth']);
   }
 
   async getHistory(userId: string, limit = DEFAULT_HISTORY_LIMIT) {

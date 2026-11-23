@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const expenseCategoryOptions = [
   { value: 'HOUSING', label: 'Moradia' },
-  { value: 'FOOD', label: 'Alimentacao' },
+  { value: 'FOOD', label: 'Alimentação' },
   { value: 'TRANSPORT', label: 'Transporte' },
-  { value: 'HEALTH', label: 'Saude' },
-  { value: 'EDUCATION', label: 'Educacao' },
+  { value: 'HEALTH', label: 'Saúde' },
+  { value: 'EDUCATION', label: 'Educação' },
   { value: 'LEISURE', label: 'Lazer' },
   { value: 'SUBSCRIPTIONS', label: 'Assinaturas' },
   { value: 'TAXES', label: 'Impostos' },
@@ -13,8 +13,8 @@ export const expenseCategoryOptions = [
 ] as const;
 
 export const paymentMethodOptions = [
-  { value: 'CASH', label: 'Dinheiro / Debito / Pix' },
-  { value: 'CREDIT_CARD', label: 'Cartao de credito' },
+  { value: 'CASH', label: 'Dinheiro / Débito / Pix' },
+  { value: 'CREDIT_CARD', label: 'Cartão de crédito' },
 ] as const;
 
 export const expenseSchema = z

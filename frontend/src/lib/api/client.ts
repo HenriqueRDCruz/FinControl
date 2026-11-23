@@ -1,4 +1,6 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api').replace(/\/+$/, '');
+// Por padrao a API e acessada pelo proprio dominio do frontend (/api), que o Next
+// repassa ao backend (ver next.config.js). Assim o cookie de refresh e "do mesmo site".
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
 
 let accessToken: string | null = null;
 
@@ -8,6 +10,13 @@ export function setAccessToken(token: string | null) {
 
 export function getAccessToken() {
   return accessToken;
+}
+
+let onSessionExpired: (() => void) | null = null;
+
+/** Registra o que fazer quando a sessao expira de vez (ex.: redirecionar para /login). */
+export function setSessionExpiredHandler(handler: (() => void) | null) {
+  onSessionExpired = handler;
 }
 
 export class ApiError extends Error {
@@ -42,6 +51,15 @@ async function tryRefresh(): Promise<boolean> {
   return refreshPromise;
 }
 
+/**
+ * Garante que existe uma sessao valida. Se o access token (que fica so em memoria)
+ * foi perdido, ex.: ao recarregar a pagina, tenta recupera-lo pelo refresh token do cookie.
+ */
+export async function ensureSession(): Promise<boolean> {
+  if (accessToken) return true;
+  return tryRefresh();
+}
+
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean;
   skipRefreshRetry?: boolean;
@@ -74,6 +92,7 @@ export async function apiFetch<T = unknown>(
       return apiFetch<T>(path, { ...options, skipRefreshRetry: true });
     }
     setAccessToken(null);
+    onSessionExpired?.();
   }
 
   if (!res.ok) {

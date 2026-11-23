@@ -26,23 +26,23 @@ export default function RegisterPage() {
       setSuccess(true);
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
-        setServerError('Este e-mail ja esta cadastrado. Tente entrar ou recuperar sua senha.');
+        setServerError('Este e-mail já está cadastrado. Tente entrar ou recuperar sua senha.');
       } else if (err instanceof ApiError && err.status === 400) {
-        setServerError(err.message || 'Dados invalidos. Verifique os campos e tente novamente.');
+        setServerError(err.message || 'Dados inválidos. Verifique os campos e tente novamente.');
       } else {
-        setServerError('Nao foi possivel concluir o cadastro. Verifique sua conexao e tente novamente.');
+        setServerError('Não foi possível concluir o cadastro. Verifique sua conexão e tente novamente.');
       }
     }
   }
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 dark:bg-neutral-950">
+      <div className="flex w-full items-center justify-center px-6 py-10">
         <div className="w-full max-w-sm space-y-3 text-center">
           <h1 className="text-xl font-semibold">Verifique seu e-mail</h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Enviamos um link de confirmacao para o e-mail informado. Confirme para poder entrar
-            na plataforma.
+          <p className="text-sm text-neutral-500">
+            Enviamos um link de confirmação para o e-mail informado (confira também o spam). Você
+            já pode entrar na plataforma.
           </p>
           <Link href="/login" className="inline-block text-sm text-blue-600 hover:underline">
             Voltar para o login
@@ -53,13 +53,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 dark:bg-neutral-950">
+    <div className="flex w-full items-center justify-center px-6 py-10">
       <div className="w-full max-w-sm space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+          <h1 className="text-3xl font-semibold text-neutral-900">
             Criar conta
           </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-1 text-sm text-neutral-500">
             Comece a organizar sua vida financeira
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
               id="name"
               type="text"
               autoComplete="name"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('name')}
             />
             {errors.name && (
@@ -89,7 +89,7 @@ export default function RegisterPage() {
               id="email"
               type="email"
               autoComplete="email"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('email')}
             />
             {errors.email && (
@@ -105,7 +105,7 @@ export default function RegisterPage() {
               id="password"
               type="password"
               autoComplete="new-password"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('password')}
             />
             {errors.password && (
@@ -121,7 +121,7 @@ export default function RegisterPage() {
               id="confirmPassword"
               type="password"
               autoComplete="new-password"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('confirmPassword')}
             />
             {errors.confirmPassword && (
@@ -140,7 +140,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+            className="w-full rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {isSubmitting ? 'Criando conta…' : 'Criar conta'}
           </button>

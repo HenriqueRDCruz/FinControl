@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const incomeSourceOptions = [
-  { value: 'SALARY', label: 'Salario' },
+  { value: 'SALARY', label: 'Salário' },
   { value: 'FREELANCE', label: 'Freelance' },
   { value: 'INVESTMENT_INCOME', label: 'Rendimento de investimento' },
   { value: 'GIFT', label: 'Presente' },

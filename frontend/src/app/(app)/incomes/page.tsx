@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -9,6 +8,7 @@ import {
   IncomeFormValues,
   incomeSourceOptions,
 } from '@/lib/validations/income.schema';
+import { formatDate, todayISO } from '@/lib/format';
 import { listIncomes, createIncome, deleteIncome, Income } from '@/lib/api/incomes';
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -33,7 +33,7 @@ export default function IncomesPage() {
     formState: { errors, isSubmitting },
   } = useForm<IncomeFormValues>({
     resolver: zodResolver(incomeSchema),
-    defaultValues: { source: 'OTHER', date: new Date().toISOString().slice(0, 10) },
+    defaultValues: { source: 'OTHER', date: todayISO() },
   });
 
   const load = useCallback(async () => {
@@ -56,11 +56,11 @@ export default function IncomesPage() {
     setActionError(null);
     try {
       await createIncome(values);
-      reset({ source: 'OTHER', date: new Date().toISOString().slice(0, 10), description: '', amount: undefined, notes: '' });
+      reset({ source: 'OTHER', date: todayISO(), description: '', amount: undefined, notes: '' });
       setFormOpen(false);
       await load();
     } catch {
-      setActionError('Nao foi possivel salvar a renda. Tente novamente.');
+      setActionError('Não foi possível salvar a renda. Tente novamente.');
     }
   }
 
@@ -70,24 +70,21 @@ export default function IncomesPage() {
       await deleteIncome(id);
       await load();
     } catch {
-      setActionError('Nao foi possivel excluir. Tente novamente.');
+      setActionError('Não foi possível excluir. Tente novamente.');
     } finally {
       setDeletingId(null);
     }
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <Link href="/" className="text-sm text-neutral-500 hover:underline">
-            ← Inicio
-          </Link>
-          <h1 className="mt-1 text-2xl font-semibold">Renda</h1>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Renda</h1>
         </div>
         <button
           onClick={() => setFormOpen((v) => !v)}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
+          className="rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white"
         >
           {formOpen ? 'Cancelar' : '+ Nova renda'}
         </button>
@@ -96,16 +93,16 @@ export default function IncomesPage() {
       {formOpen && (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-6 space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+          className="mb-6 max-w-xl space-y-4 rounded-xl border border-neutral-200 p-5"
           noValidate
         >
           <div>
             <label htmlFor="description" className="block text-sm font-medium">
-              Descricao
+              Descrição
             </label>
             <input
               id="description"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('description')}
             />
             {errors.description && (
@@ -122,7 +119,7 @@ export default function IncomesPage() {
                 id="amount"
                 type="number"
                 step="0.01"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('amount')}
               />
               {errors.amount && <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>}
@@ -135,7 +132,7 @@ export default function IncomesPage() {
               <input
                 id="date"
                 type="date"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('date')}
               />
               {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>}
@@ -148,7 +145,7 @@ export default function IncomesPage() {
             </label>
             <select
               id="source"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('source')}
             >
               {incomeSourceOptions.map((opt) => (
@@ -161,11 +158,11 @@ export default function IncomesPage() {
 
           <div>
             <label htmlFor="notes" className="block text-sm font-medium">
-              Observacao (opcional)
+              Observação (opcional)
             </label>
             <input
               id="notes"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('notes')}
             />
           </div>
@@ -175,7 +172,7 @@ export default function IncomesPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+            className="w-full rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {isSubmitting ? 'Salvando…' : 'Salvar renda'}
           </button>
@@ -187,18 +184,18 @@ export default function IncomesPage() {
       )}
 
       {loadState === 'error' && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center dark:border-red-900 dark:bg-red-950">
-          <p className="text-sm text-red-700 dark:text-red-300">
-            Nao foi possivel carregar suas rendas.
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+          <p className="text-sm text-red-700">
+            Não foi possível carregar suas rendas.
           </p>
-          <button onClick={load} className="mt-2 text-sm text-red-700 underline dark:text-red-300">
+          <button onClick={load} className="mt-2 text-sm text-red-700 underline">
             Tentar novamente
           </button>
         </div>
       )}
 
       {loadState === 'ready' && incomes.length === 0 && (
-        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-700">
+        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
           <p className="text-sm text-neutral-500">Nenhuma renda cadastrada ainda.</p>
         </div>
       )}
@@ -206,26 +203,26 @@ export default function IncomesPage() {
       {loadState === 'ready' && incomes.length > 0 && (
         <>
           <div className="mb-3 flex items-center justify-between text-sm text-neutral-500">
-            <span>{incomes.length} lancamento(s)</span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span>{incomes.length} lançamento(s)</span>
+            <span className="font-medium text-neutral-900">
               Total: {currencyFormatter.format(total)}
             </span>
           </div>
 
           {actionError && <p className="mb-3 text-sm text-red-600">{actionError}</p>}
 
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200">
             {incomes.map((income) => (
               <li key={income.id} className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">{income.description}</p>
                   <p className="text-sm text-neutral-500">
-                    {new Date(income.date).toLocaleDateString('pt-BR')} ·{' '}
+                    {formatDate(income.date)} ·{' '}
                     {incomeSourceOptions.find((o) => o.value === income.source)?.label}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="font-medium text-emerald-600">
                     {currencyFormatter.format(income.amount)}
                   </span>
                   {deletingId === income.id ? (

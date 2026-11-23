@@ -129,7 +129,7 @@ export class AuthService {
     const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_HOURS * 60 * 60 * 1000);
 
     await this.prisma.emailVerificationToken.create({ data: { userId, tokenHash, expiresAt } });
-    await this.mail.sendEmailVerification(email, token);
+    void this.mail.sendEmailVerification(email, token); // em segundo plano; erros ficam no log
   }
 
   async verifyEmail(dto: VerifyEmailDto) {
@@ -163,7 +163,8 @@ export class AuthService {
       const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MINUTES * 60 * 1000);
 
       await this.prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } });
-      await this.mail.sendPasswordReset(user.email, token);
+      // Em segundo plano: a resposta demora o mesmo tempo exista a conta ou não (não revela cadastros).
+      void this.mail.sendPasswordReset(user.email, token);
     }
 
     return {

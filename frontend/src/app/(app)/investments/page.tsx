@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -68,7 +67,7 @@ export default function InvestmentsPage() {
       setFormOpen(false);
       await load();
     } catch {
-      setActionError('Nao foi possivel salvar o investimento. Tente novamente.');
+      setActionError('Não foi possível salvar o investimento. Tente novamente.');
     }
   }
 
@@ -78,24 +77,21 @@ export default function InvestmentsPage() {
       await deleteInvestment(id);
       await load();
     } catch {
-      setActionError('Nao foi possivel excluir. Tente novamente.');
+      setActionError('Não foi possível excluir. Tente novamente.');
     } finally {
       setDeletingId(null);
     }
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <Link href="/" className="text-sm text-neutral-500 hover:underline">
-            ← Inicio
-          </Link>
-          <h1 className="mt-1 text-2xl font-semibold">Investimentos</h1>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Investimentos</h1>
         </div>
         <button
           onClick={() => setFormOpen((v) => !v)}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
+          className="rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white"
         >
           {formOpen ? 'Cancelar' : '+ Novo investimento'}
         </button>
@@ -104,7 +100,7 @@ export default function InvestmentsPage() {
       {formOpen && (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-6 space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+          className="mb-6 max-w-xl space-y-4 rounded-xl border border-neutral-200 p-5"
           noValidate
         >
           <div>
@@ -114,7 +110,7 @@ export default function InvestmentsPage() {
             <input
               id="name"
               placeholder="Ex.: PETR4, Tesouro Selic 2029"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('name')}
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
@@ -127,7 +123,7 @@ export default function InvestmentsPage() {
               </label>
               <select
                 id="type"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('type')}
               >
                 {investmentTypeOptions.map((opt) => (
@@ -144,7 +140,7 @@ export default function InvestmentsPage() {
               </label>
               <input
                 id="institution"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('institution')}
               />
             </div>
@@ -159,7 +155,7 @@ export default function InvestmentsPage() {
                 id="investedAmount"
                 type="number"
                 step="0.01"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('investedAmount')}
               />
               {errors.investedAmount && (
@@ -175,7 +171,7 @@ export default function InvestmentsPage() {
                 id="currentValue"
                 type="number"
                 step="0.01"
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('currentValue')}
               />
               {errors.currentValue && (
@@ -189,7 +185,7 @@ export default function InvestmentsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+            className="w-full rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {isSubmitting ? 'Salvando…' : 'Salvar investimento'}
           </button>
@@ -201,25 +197,25 @@ export default function InvestmentsPage() {
       )}
 
       {loadState === 'error' && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center dark:border-red-900 dark:bg-red-950">
-          <p className="text-sm text-red-700 dark:text-red-300">
-            Nao foi possivel carregar seus investimentos.
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+          <p className="text-sm text-red-700">
+            Não foi possível carregar seus investimentos.
           </p>
-          <button onClick={load} className="mt-2 text-sm text-red-700 underline dark:text-red-300">
+          <button onClick={load} className="mt-2 text-sm text-red-700 underline">
             Tentar novamente
           </button>
         </div>
       )}
 
       {loadState === 'ready' && investments.length === 0 && (
-        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-700">
+        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
           <p className="text-sm text-neutral-500">Nenhum investimento cadastrado ainda.</p>
         </div>
       )}
 
       {loadState === 'ready' && investments.length > 0 && summary && (
         <>
-          <div className="mb-6 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
+          <div className="mb-6 rounded-lg border border-neutral-200 p-4">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-xs text-neutral-500">Investido</p>
@@ -232,7 +228,7 @@ export default function InvestmentsPage() {
               <div>
                 <p className="text-xs text-neutral-500">Lucro/Prejuizo</p>
                 <p
-                  className={`font-medium ${summary.profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
+                  className={`font-medium ${summary.profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}
                 >
                   {currencyFormatter.format(summary.profit)} ({summary.profitPercent.toFixed(1)}%)
                 </p>
@@ -241,13 +237,13 @@ export default function InvestmentsPage() {
 
             {summary.allocation.length > 0 && (
               <div className="mt-4 space-y-2">
-                <p className="text-xs text-neutral-500">Distribuicao da carteira</p>
+                <p className="text-xs text-neutral-500">Distribuição da carteira</p>
                 {summary.allocation.map((a) => (
                   <div key={a.type} className="flex items-center gap-2 text-sm">
                     <span className="w-28 shrink-0">{typeLabel(a.type)}</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100">
                       <div
-                        className="h-full bg-neutral-900 dark:bg-neutral-100"
+                        className="h-full rounded-full bg-gold-500"
                         style={{ width: `${a.percent}%` }}
                       />
                     </div>
@@ -262,7 +258,7 @@ export default function InvestmentsPage() {
 
           {actionError && <p className="mb-3 text-sm text-red-600">{actionError}</p>}
 
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200">
             {investments.map((investment) => {
               const profit = investment.currentValue - investment.investedAmount;
               return (
@@ -278,7 +274,7 @@ export default function InvestmentsPage() {
                     <div className="text-right">
                       <p className="font-medium">{currencyFormatter.format(investment.currentValue)}</p>
                       <p
-                        className={`text-xs ${profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
+                        className={`text-xs ${profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}
                       >
                         {profit >= 0 ? '+' : ''}
                         {currencyFormatter.format(profit)}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { creditCardSchema, CreditCardFormValues } from '@/lib/validations/credit-card.schema';
@@ -71,7 +70,7 @@ export default function CreditCardsPage() {
       setFormOpen(false);
       await load();
     } catch {
-      setActionError('Nao foi possivel salvar o cartao. Tente novamente.');
+      setActionError('Não foi possível salvar o cartão. Tente novamente.');
     }
   }
 
@@ -81,42 +80,39 @@ export default function CreditCardsPage() {
       await archiveCreditCard(id);
       await load();
     } catch {
-      setActionError('Nao foi possivel arquivar o cartao. Tente novamente.');
+      setActionError('Não foi possível arquivar o cartão. Tente novamente.');
     } finally {
       setArchivingId(null);
     }
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <Link href="/" className="text-sm text-neutral-500 hover:underline">
-            ← Inicio
-          </Link>
-          <h1 className="mt-1 text-2xl font-semibold">Cartoes</h1>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Cartões</h1>
         </div>
         <button
           onClick={() => setFormOpen((v) => !v)}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
+          className="rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white"
         >
-          {formOpen ? 'Cancelar' : '+ Novo cartao'}
+          {formOpen ? 'Cancelar' : '+ Novo cartão'}
         </button>
       </div>
 
       {formOpen && (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-6 space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+          className="mb-6 max-w-xl space-y-4 rounded-xl border border-neutral-200 p-5"
           noValidate
         >
           <div>
             <label htmlFor="name" className="block text-sm font-medium">
-              Nome do cartao
+              Nome do cartão
             </label>
             <input
               id="name"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('name')}
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
@@ -130,7 +126,7 @@ export default function CreditCardsPage() {
               id="limitAmount"
               type="number"
               step="0.01"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
               {...register('limitAmount')}
             />
             {errors.limitAmount && (
@@ -148,7 +144,7 @@ export default function CreditCardsPage() {
                 type="number"
                 min={1}
                 max={31}
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('closingDay')}
               />
               {errors.closingDay && (
@@ -164,7 +160,7 @@ export default function CreditCardsPage() {
                 type="number"
                 min={1}
                 max={31}
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
                 {...register('dueDay')}
               />
               {errors.dueDay && <p className="mt-1 text-sm text-red-600">{errors.dueDay.message}</p>}
@@ -176,9 +172,9 @@ export default function CreditCardsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+            className="w-full rounded-md bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
-            {isSubmitting ? 'Salvando…' : 'Salvar cartao'}
+            {isSubmitting ? 'Salvando…' : 'Salvar cartão'}
           </button>
         </form>
       )}
@@ -188,19 +184,19 @@ export default function CreditCardsPage() {
       )}
 
       {loadState === 'error' && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center dark:border-red-900 dark:bg-red-950">
-          <p className="text-sm text-red-700 dark:text-red-300">
-            Nao foi possivel carregar seus cartoes.
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+          <p className="text-sm text-red-700">
+            Não foi possível carregar seus cartões.
           </p>
-          <button onClick={load} className="mt-2 text-sm text-red-700 underline dark:text-red-300">
+          <button onClick={load} className="mt-2 text-sm text-red-700 underline">
             Tentar novamente
           </button>
         </div>
       )}
 
       {loadState === 'ready' && cards.length === 0 && (
-        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-700">
-          <p className="text-sm text-neutral-500">Nenhum cartao cadastrado ainda.</p>
+        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
+          <p className="text-sm text-neutral-500">Nenhum cartão cadastrado ainda.</p>
         </div>
       )}
 
@@ -217,7 +213,7 @@ export default function CreditCardsPage() {
             return (
               <li
                 key={card.id}
-                className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+                className="rounded-lg border border-neutral-200 p-4"
               >
                 <div className="mb-3 flex items-start justify-between">
                   <div>
@@ -253,9 +249,9 @@ export default function CreditCardsPage() {
 
                 {card.limit && (
                   <div className="mb-3">
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
                       <div
-                        className="h-full bg-neutral-900 dark:bg-neutral-100"
+                        className="h-full rounded-full bg-indigo-600"
                         style={{ width: `${usagePercent}%` }}
                       />
                     </div>
@@ -267,13 +263,13 @@ export default function CreditCardsPage() {
                 )}
 
                 {card.invoice && (
-                  <div className="rounded-md bg-neutral-50 p-3 text-sm dark:bg-neutral-900">
+                  <div className="rounded-md bg-neutral-50 p-3 text-sm">
                     <p className="font-medium">
                       Fatura atual ({card.invoice.month}/{card.invoice.year}):{' '}
                       {currencyFormatter.format(card.invoice.total)}
                     </p>
                     {card.invoice.items.length === 0 && (
-                      <p className="mt-1 text-neutral-500">Nenhum lancamento nesta fatura.</p>
+                      <p className="mt-1 text-neutral-500">Nenhum lançamento nesta fatura.</p>
                     )}
                   </div>
                 )}
